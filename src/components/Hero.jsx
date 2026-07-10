@@ -24,7 +24,7 @@ export default function Hero() {
           className="animate-fade-up mt-4 text-6xl font-bold tracking-tight text-gray-50 sm:text-7xl"
           style={{ animationDelay: "100ms" }}
         >
-          Clifford Baidoo
+          Clifford Kingsley Baidoo
         </h1>
 
         <p
