@@ -10,7 +10,7 @@ export default function Footer() {
         <p>
           <span className="text-cyan">$</span>echo $USER
         </p>
-        <p>© {year} Clifford Baidoo</p>
+        <p>© {year} Clifford Kingsley Baidoo</p>
       </div>
     </footer>
   );
