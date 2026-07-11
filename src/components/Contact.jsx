@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  MailIcon,
   SendIcon,
   GitHubIcon,
   LinkedInIcon,
@@ -104,14 +103,6 @@ export default function Contact() {
               <SendIcon className="h-4 w-4" /> Send Message
             </button>
           </form>
-
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="mt-6 inline-flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-cyan"
-          >
-            <MailIcon className="h-4 w-4" /> or email me directly at{" "}
-            {CONTACT_EMAIL}
-          </a>
         </div>
         </Reveal>
 
