@@ -1,4 +1,5 @@
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 import {
   SendIcon,
   GitHubIcon,
@@ -9,27 +10,42 @@ import {
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 
-const CONTACT_EMAIL = "baidooclifford56@gmail.com";
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const fieldClasses =
   "w-full border border-border bg-bg px-4 py-3 text-gray-100 placeholder:text-gray-600 outline-none transition-colors focus:border-cyan";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
 
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const subject = `Portfolio contact from ${form.name || "website visitor"}`;
-    const body = `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`;
-    const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
+    setStatus("sending");
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: form.name,
+          from_email: form.email,
+          message: form.message,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      );
+      setStatus("sent");
+      setForm({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.error("EmailJS send failed:", err);
+      setStatus("error");
+    }
   }
 
   return (
@@ -98,10 +114,32 @@ export default function Contact() {
 
             <button
               type="submit"
-              className="inline-flex w-fit items-center gap-2 bg-cyan px-6 py-3 font-medium text-black transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+              disabled={status === "sending"}
+              className="inline-flex w-fit items-center gap-2 bg-cyan px-6 py-3 font-medium text-black transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
-              <SendIcon className="h-4 w-4" /> Send Message
+              <SendIcon className="h-4 w-4" />
+              {status === "sending" ? "Sending..." : "Send Message"}
             </button>
+
+            {status === "sent" && (
+              <p className="text-sm text-cyan">
+                <span className="text-gray-500">$</span> message sent — I'll
+                get back to you soon.
+              </p>
+            )}
+            {status === "error" && (
+              <p className="text-sm text-red-400">
+                <span className="text-gray-500">$</span> send failed — please
+                try again or email me directly at{" "}
+                <a
+                  href="mailto:baidooclifford56@gmail.com"
+                  className="underline"
+                >
+                  baidooclifford56@gmail.com
+                </a>
+                .
+              </p>
+            )}
           </form>
         </div>
         </Reveal>
